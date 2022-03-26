@@ -1,0 +1,80 @@
+<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Swagger PCS</title>
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" type="text/css" href="./swagger-ui.css" />
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+    <style>
+      html
+      {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
+
+      *,
+      *:before,
+      *:after
+      {
+        box-sizing: inherit;
+      }
+
+      body
+      {
+        margin:0;
+        background: #fafafa;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="swagger-ui"></div>
+
+    <script src="./swagger-ui-bundle.js" charset="UTF-8"> </script>
+    <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+    <script>
+    window.onload = function() {
+      // Begin Swagger UI call region
+      const ui = SwaggerUIBundle({
+        urls: [
+          {url:"./pcs/maritime-agent.openapi.yml", name: "MaritimeAgentAPI"},
+          {url:"./pcs/mooring-operators.openapi.yml", name: "MooringOperatorsAPI"},
+          {url:"./pcs/port-facilities.openapi.yml", name: "PortFacilitiesAPI"},
+          {url:"./pcs/tugboat-company.openapi.yml", name: "TugboatAPI"},
+          {url:"./pcs/port-facilities-type.openapi.yml", name: "PortFacilitiesTypeAPI"},
+          {url:"./pcs/user-agent-registration.openapi.yml", name: "UserAgentRegistrationAPI"},
+          {url:"./pcs/voyage.openapi.yml", name: "VoyageAPI"},
+          {url:"./pcs/ship-supplier.openapi.yml", name: "ShipSupplierAPI"},
+          {url:"./pcs/ship-store.openapi.yml", name: "ShipStoreAPI"},
+          {url:"./pcs/payment.openapi.yml", name: "PaymentAPI"},
+          {url:"./pcs/event-planning.openapi.yml", name: "EventPlanningAPI"},
+          {url:"./pcs/dangerous-goods.openapi.yml", name: "DangerousGoodsAPI"},
+          {url:"./pcs/crew-list.openapi.yml", name: "CrewListAPI"},
+          {url:"./pcs/authorizations.openapi.yml", name: "AuthorizationsAPI"},
+        ],
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        queryConfigEnabled: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout"
+      });
+      // End Swagger UI call region
+
+      window.ui = ui;
+    };
+  </script>
+  </body>
+</html>

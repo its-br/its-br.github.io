@@ -1,0 +1,205 @@
+openapi: 3.0.3
+servers:
+  - description: PCS Port Facilities Type API
+    url: https://pcs-api.its.org.br/api/port-facilities-type/0.0.1
+info:
+  description: Rest API for manage Type of Port Facilities informations
+  version: 0.0.1
+  title: PCS Port Facilities Type API
+  contact:
+    email: contato@its.org.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /port-facilitiy-type:
+    post:
+      summary: adds a Port Facilitiy item
+      operationId: addPortFacilitiy
+      description: Adds an item to the PCS
+      responses:
+        '201':
+          description: Item created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: An existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortFacilityRegistration'
+        description: Port Facilities item to add
+  /port-facility-types:
+    get:
+      summary: Get Port Facilities by cnpj
+      operationId: getPortFacilities
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PortFacilityType'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PortFacilityType'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Port Facilities not found
+  /port-facility-type/{dcsaCode}:
+    patch:
+      summary: Updated Port Facilitiy Type
+      description: Update Port Facilitiy type
+      operationId: updatePortFacilitiesType
+      parameters:
+        - name: dcsaCode
+          in: path
+          description: DCSA code of port facility type that needs to be fetched
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortFacilityRegistration'
+        description: Updated Port Facilities Type object
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Port Facilities Type not found
+    delete:
+      summary: Delete Port Facilitiy Type
+      description: Delete Port Facility Type
+      operationId: deletePortFacilitiesType
+      parameters:
+        - name: dcsaCode
+          in: path
+          description: DCSA code of port facility type that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Port Facility Type not found
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: error message code
+        message:
+          type: string
+          description: error message description
+    PortFacilityRegistration:
+      type: object
+      required:
+        - cnpj
+        - portFacilityType
+        - portFacilityCode
+        - phone
+        - email
+        - address
+      properties:
+        cnpj:
+          type: string
+          example: '12345678901234'
+        userAgent:
+          type: string
+          description: cnpj Number of user agent
+        portFacilityType:
+          type: string
+          description: type of port facility defined as DCSA pattern
+        portFacilityCode:
+          type: string
+          description: Registry code of port facility defined as in SMDG database
+        email:
+          type: string
+          format: email
+          example: acme@acme.com
+        phone:
+          type: string
+          example: (11) 9 9999 9999
+        address:
+          $ref: '#/components/schemas/Address'
+    PortFacilityType:
+      type: object
+      required:
+        - dcsaCode
+        - name
+        - description
+      properties:
+        dcsaCode:
+          type: string
+          description: DCSA Code with 4 characters
+        name:
+          type: string
+          description: Port facility name
+        description:
+          type: string
+          description: Description of port facility type
+    Address:
+      type: object
+      required:
+        - address
+        - state
+        - city
+        - postalCode
+      properties:
+        address:
+          type: string
+        state:
+          type: string
+          example: Sao Paulo
+        city:
+          type: string
+          example: Sao Paulo
+        postalCode:
+          type: string

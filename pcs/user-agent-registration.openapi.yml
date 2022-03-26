@@ -1,0 +1,196 @@
+openapi: 3.0.3
+servers:
+  - description: PCS User Agent Registration API
+    url: https://pcs-api.its.org.br/api/user-agent-registration/0.0.1
+info:
+  description: Rest API for manage User Agent Registry
+  version: 0.0.1
+  title: PCS User Agent Registration API
+  contact:
+    email: contato@its.org.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /user-agent-registration:
+    post:
+      summary: Create a user agent item
+      operationId: addUserAgent
+      description: Add user agent item to PCS
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+        description: User Agent item to add
+      responses:
+        '201':
+          description: Item created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: An existing item already exists
+  /user-agent-registration/{cnpj}:
+    get:
+      summary: Create a user agent item
+      operationId: getUserAgent
+      parameters:
+        - name: cnpj
+          in: path
+          description: User Agent's cnpj number that needs to be fetched.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Registration'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User Agent not found
+    patch:
+      summary: Update User Agent
+      description: Update User Agent, need the same cnpj in User Certificate.
+      operationId: updateUserAgent
+      parameters:
+        - name: cnpj
+          in: path
+          description: Cnpj that need to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationUpdate'
+        description: Updated User Agent object
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User Agent not found
+    delete:
+      summary: Delete User Agent
+      description: Update User Agent, need the same cnpj in User Certificate.
+      operationId: deleteUserAgent
+      parameters:
+        - name: cnpj
+          in: path
+          description: The cnpj that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User Agent not found
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: error message code
+        message:
+          type: string
+          description: error message description
+    Registration:
+      type: object
+      required:
+        - cnpj
+        - phone
+        - email
+        - address
+      properties:
+        cnpj:
+          type: string
+          example: '12345678901234'
+        email:
+          type: string
+          format: email
+          example: acme@acme.com
+        phone:
+          type: string
+          example: (11) 9 9999 9999
+        address:
+          $ref: '#/components/schemas/Address'
+    RegistrationUpdate:
+      type: object
+      required:
+        - email
+        - phone
+        - address
+      properties:
+        email:
+          type: string
+          format: email
+          example: acme@acme.com
+        phone:
+          type: string
+          example: (11) 9 9999 9999
+        address:
+          $ref: '#/components/schemas/Address'
+    Address:
+      type: object
+      required:
+        - address
+        - state
+        - city
+        - postalCode
+      properties:
+        address:
+          type: string
+        state:
+          type: string
+          example: Sao Paulo
+        city:
+          type: string
+          example: Sao Paulo
+        postalCode:
+          type: string

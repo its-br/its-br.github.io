@@ -1,0 +1,219 @@
+openapi: 3.0.3
+servers:
+  - description: PCS Maritime Agent API
+    url: https://pcs-api.its.org.br/api/maritime-agent/0.0.1
+info:
+  description: Rest API for manage Maritime Agent registry
+  version: 0.0.1
+  title: PCS Maritime Agent API
+  contact:
+    email: contato@its.org.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /maritime-agent:
+    post:
+      summary: adds a Maritime Agent item
+      operationId: addMaritimeAgent
+      description: Adds an item to the PCS
+      responses:
+        '201':
+          description: Item created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+        description: Maritime Agent item to add
+  /maritime-agent-user-agent:
+    post:
+      summary: >-
+        Links a attorney to the actor's registration, authorizing him/her to
+        represent him/her in the use of PCS services
+      operationId: bindUserAgent
+      description: Link an Attorney
+      responses:
+        '201':
+          description: Item created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: An existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAgentRegistration'
+        description: Maritime Agent item to add
+  /maritime-agent/{cnpj}:
+    get:
+      summary: Get Maritime Agent by cnpj
+      operationId: getMaritimeAgent
+      parameters:
+        - name: cnpj
+          in: path
+          description: The cnpj number that needs to be fetched.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Registration'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Maritime Agent not found
+    patch:
+      summary: Updated Maritime Agent
+      description: Update Maritime Agent, need the same cnpj in User Certificate.
+      operationId: updateMaritimeAgent
+      parameters:
+        - name: cnpj
+          in: path
+          description: Cnpj that need to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+        description: Updated Maritime Agent object
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Maritime Agent not found
+    delete:
+      summary: Delete Maritime Agent
+      description: Update Maritime Agent, need the same cnpj in User Certificate.
+      operationId: deleteMaritimeAgent
+      parameters:
+        - name: cnpj
+          in: path
+          description: The cnpj that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Maritime Agent not found
+components:
+  schemas:
+    Registration:
+      type: object
+      required:
+        - cnpj
+        - phone
+        - email
+        - address
+      properties:
+        cnpj:
+          type: string
+          example: '12345678901234'
+        email:
+          type: string
+          format: email
+          example: acme@acme.com
+        phone:
+          type: string
+          example: (11) 9 9999 9999
+        address:
+          $ref: '#/components/schemas/Address'
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: error message code
+        message:
+          type: string
+          description: error message description
+    UserAgentRegistration:
+      type: object
+      required:
+        - cnpj
+        - cnpjUserAgent
+      properties:
+        cnpj:
+          type: string
+          description: cnpj number
+        cnpjUserAgent:
+          type: string
+          description: cnpj number
+    Address:
+      type: object
+      required:
+        - address
+        - state
+        - city
+        - postalCode
+      properties:
+        address:
+          type: string
+        state:
+          type: string
+          example: Sao Paulo
+        city:
+          type: string
+          example: Sao Paulo
+        postalCode:
+          type: string

@@ -1,0 +1,207 @@
+openapi: 3.0.3
+servers:
+  - description: PCS Authorization API
+    url: https://pcs-api.its.org.br/api/authorizations/0.0.1
+info:
+  description: Rest API for manage Authorizations
+  version: 0.0.1
+  title: PCS Authorization API
+  contact:
+    email: contato@its.org.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /authorizations/{PCSvoyageID}:
+    post:
+      summary: Consenting agency issues authorization
+      operationId: issueAuthorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+      responses:
+        '201':
+          description: Item created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: an existing item already exists
+    get:
+      summary: Consenting agency consults authorization request information
+      operationId: getAuthorizations
+      parameters:
+        - name: PCSvoyageID
+          in: path
+          description: Voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Authorization'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Authorization'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: >-
+        Through this interface, the consenting agency can update information
+        related to the authorization
+      operationId: updateAuthorizationConsentingAgency
+      parameters:
+        - name: PCSvoyageID
+          in: path
+          description: Voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+        description: Updated Authorization object
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /authorizations-request/:
+    post:
+      summary: Requesting company sends authorization request
+      operationId: requestAuthorization
+      responses:
+        '201':
+          description: Item created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: An existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+  /authorizations/{AuthorizationID}:
+    get:
+      summary: Requesting company consult authorization request
+      operationId: getAuthorizationsRequest
+      parameters:
+        - name: AuthorizationID
+          in: path
+          description: Authorization code to be consulted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Authorization'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Authorization'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Authorization ID not found
+    delete:
+      summary: Disable request for consent
+      operationId: deleteAuthorization
+      parameters:
+        - name: AuthorizationID
+          in: path
+          description: ID of authorization that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid cnpj supplied
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: error message code
+        message:
+          type: string
+          description: error message description
+    Authorization:
+      type: object
+      required:
+        - PCSVoyageID
+        - AuthorizationID
+        - AuthorizationStatus
+        - RequirementCode
+        - RequirementDescription
+      properties:
+        PCSVoyageID:
+          type: string
+          description: >-
+            Receipt code made available to the applicant for future status
+            consultation at the time of trip creation
+        AuthorizationID:
+          type: string
+          description: authorization code
+        AuthorizationStatus:
+          type: string
+          description: authorization status
+        RequirementCode:
+          type: string
+          description: Pending code.
+        RequirementDescription:
+          type: string
+          description: description of pendency

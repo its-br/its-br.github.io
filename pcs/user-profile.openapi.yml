@@ -1,0 +1,88 @@
+openapi: 3.0.3
+servers:
+  - description: PCS User Profile API
+    url: https://pcs-api.its.org.br/api/user-profile/0.0.1
+info:
+  description: Rest API for get User Profile Info
+  version: 0.0.1
+  title: PCS User Profile API
+  contact:
+    email: contato@its.org.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /user-profile/{cnpj}:
+    get:
+      parameters:
+        - name: cnpj
+          in: path
+          required: true
+          schema:
+            type: string
+      summary: >-
+        Through this interface, it is possible to consult user profile
+        informations.
+      operationId: getUserProfile
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: error message code
+        message:
+          type: string
+          description: error message description
+    UserProfile:
+      type: object
+      required:
+        - name
+        - cnpj
+        - email
+        - profile
+      properties:
+        name:
+          type: string
+          example: Acme Ports Ltda.
+        cnpj:
+          type: string
+          minLength: 14
+          maxLength: 14
+          example: '12345678901234'
+        email:
+          type: string
+          format: email
+          example: acme@acme.com
+        profile:
+          type: string
+          enum:
+            - MaritimeAgent
+            - MooringOperators
+            - PortFacilities
+            - ShipSupplier
+            - Tugboat
+            - UserAgent

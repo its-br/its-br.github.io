@@ -1,0 +1,140 @@
+openapi: 3.0.3
+servers:
+  - description: PCS Event Planning API
+    url: https://pcs-api.its.org.br/api/event-planning/0.0.1
+info:
+  description: >-
+    The eventPlanning API is intended to communicate with the PCS regarding the
+    times of events related to the berthing of the ship, including:; time of
+    berthing and unberthing, of pilot's climb on the ship, and start and end of
+    loading and unloading operations. The service can be used to inform
+    estimated, requested and current times of each event.
+  version: 0.0.1
+  title: PCS Event Planning API
+  contact:
+    email: contato@its.org.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /event-planning/{PCSVoyageID}:
+    post:
+      parameters:
+        - name: PCSVoyageID
+          in: path
+          description: Voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      summary: >-
+        Updating the operations of berthing and unattracting, loading and
+        unloading, ascent and descent of the ship.
+      operationId: eventPlanningService
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventTimes'
+    get:
+      summary: Consult the list of times of events related to the berthing
+      operationId: getVoyagesPlanning
+      parameters:
+        - name: PCSVoyageID
+          in: path
+          description: Voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventTimes'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: error message code
+        message:
+          type: string
+          description: error message description
+    EventTimes:
+      type: object
+      required:
+        - eventPCSCode
+        - eventCreatedDateTime
+        - eventTime
+        - eventType
+        - transportEventTypeCode
+        - operationsEventTypeCode
+        - eventClassifierCode
+      properties:
+        eventPCSCode:
+          type: string
+          minLength: 4
+          maxLength: 4
+          description: Event status code
+        eventCreatedDateTime:
+          type: string
+          format: date-time
+        eventTime:
+          type: string
+          format: date-time
+        eventType:
+          type: string
+          enum:
+            - STRT
+            - CMPL
+          description: Event type, whether it is starting or ending
+        transportEventTypeCode:
+          type: string
+          enum:
+            - PLN
+            - ACT
+            - EST
+            - REQ
+          description: Transport event type
+        operationsEventTypeCode:
+          type: string
+          enum:
+            - TRANSPORT
+            - OPERATION
+            - PILOTIME
+          description: Nature of the event
+        eventClassifierCode:
+          type: string
+          enum:
+            - ARRI
+            - DEPA
+          description: Event classification

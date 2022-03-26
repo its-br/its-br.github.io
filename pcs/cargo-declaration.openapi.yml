@@ -1,0 +1,415 @@
+openapi: 3.0.3
+servers:
+  - description: PCS Cargo Declaration API
+    url: https://pcs-api.its.org.br/api/cargo-declaration/0.0.1
+info:
+  description: Rest API for manage declaration of load
+  version: 0.0.1
+  title: PCS Cargo declaration API
+  contact:
+    email: contato@its.org.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /Cargo-declaration/{PCSVoyageID}:
+    post:
+      summary: Sending the load list
+      operationId: sendCargo
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+    get:
+      summary: Inquiry for cargo information
+      operationId: getCargo
+      parameters:
+        - name: PCSVoyageID
+          in: path
+          description: Identification code of voyage that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/cargoDeclaration'
+                  - $ref: '#/components/schemas/Authorization'
+            application/xml:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/cargoDeclaration'
+                  - $ref: '#/components/schemas/Authorization'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Updated Cargo Informations
+      operationId: updateCargo
+      parameters:
+        - name: PCSVoyageID
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CargoDeclaration'
+        description: Updated Cargo object
+        required: true
+    delete:
+      summary: Delete Cargo Information
+      operationId: deleteCargo
+      parameters:
+        - name: PCSVoyageID
+          in: path
+          description: ID of voyage that contain cargo that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Voyage not found
+  /Cargo-declaration-evaluation/{PCSVoyageID}:
+    post:
+      summary: Sending load analysis information
+      operationId: evaluateCargo
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CargoDeclaration'
+components:
+  schemas:
+    AgentIdentification:
+      type: object
+      required:
+        - agentContactName
+        - agentIdentificationNumber
+        - agentName
+        - authenticationDate
+        - authenticatorName
+        - authenticatorRoleCoded
+      properties:
+        agentContactName:
+          type: string
+          description: The agent's employee contact name.
+        agentIdentificationNumber:
+          type: string
+          description: >-
+            The recognized identification number used by the ship's agent at the
+            port of notification
+        agentName:
+          type: string
+          description: The agent's name at the port of arrival.
+        authenticationDate:
+          type: string
+          description: The authentication date
+        authenticatorName:
+          type: string
+          description: >-
+            The name of the person who attests to the validity of the
+            information transmitted.
+        authenticatorRoleCoded:
+          type: string
+          description: >-
+            A code that provides the role of the person who attests to the
+            validity of the transmitted information
+    PortID:
+      type: object
+      required:
+        - portDischargeCoded
+        - portDischargeName
+        - portLoadingCoded
+        - portLoadingName
+        - authenticatorRoleCoded
+      properties:
+        portDischargeCoded:
+          type: string
+          description: Dicharge port code of referenced cargo
+        portDischargeName:
+          type: string
+          description: Name and Country of discharge port
+        portLoadingCoded:
+          type: string
+          description: loading port code of referenced cargo
+        portLoadingName:
+          type: string
+          description: Name and Country of loading port
+        authenticatorRoleCoded:
+          type: string
+          description: >-
+            A code that provides the role of the person who attests to the
+            validity of the transmitted information.
+    ShipID:
+      type: object
+      required:
+        - shipFlagStateCoded
+        - shipIMONumber
+        - shipName
+        - shipStayReferenceNumber
+      properties:
+        shipFlagStateCoded:
+          type: string
+          description: >-
+            The code representing the nationality of the ship shown on your IMO
+            ship certificate. ISO 3166-1 alpha-2 code (code  UN  /  EDIFACT
+            3207)
+        shipIMONumber:
+          type: string
+          description: >-
+            The unique ship identification number shown on your IMO Ship
+            Certificate. (Reference:/ IMO0140)
+        shipName:
+          type: string
+          description: >-
+            The unique ship identification number shown on your IMO Ship
+            Certificate.
+        shipStayReferenceNumber:
+          type: string
+          description: >-
+            Reference number assigned by a port authority to the stay of a ship
+            in port.
+    cargoDeclaration:
+      type: object
+      required:
+        - transportEquipmentIdentification Number
+        - cargoItemDescriptionGoods
+        - CargoItemGrossVolume
+        - cargoItemGrossWeight
+        - cargoItemHSCode
+        - cargoItemMarksNumbers
+        - cargoItemNumberPackages
+        - cargoItemPackageTypeCoded
+        - nameOfMaster
+        - transportContractNumber
+        - voyageNumber
+        - messageFunctionCode
+        - agentIdentification
+        - portID
+        - shipID
+      properties:
+        transportEquipmentIdentificationNumber:
+          type: string
+          description: >-
+            Identification Code of transport equipament. For containers the code
+            must have be as defined in ISO 6346
+        cargoItemDescriptionGoods:
+          type: string
+          description: Description of packed cargo
+        CargoItemGrossVolume:
+          type: integer
+          description: Gross Volume measure of packed cargo
+        cargoItemGrossWeight:
+          type: integer
+          description: Gross Weight measure of packed cargo
+        cargoItemHSCode:
+          type: string
+          description: >-
+            The Harmonized Commodity Description and Coding System (HS)
+            international standardized commodity code for the packaged cargo
+            being reported.
+        cargoItemMarksNumbers:
+          type: string
+          description: >-
+            identifier assigned by the sender as a means of tracking cargo not
+            transported in bulk.
+        cargoItemNumberPackages:
+          type: integer
+          description: counting of packages
+        cargoItemPackageTypeCoded:
+          type: string
+          description: code of unit measures for a referenced quantity on board
+        nameOfMaster:
+          type: string
+          description: The name of the person responsible for the ship
+        transportContractNumber:
+          type: string
+          description: >-
+            reference number to identify a document that proves a transport
+            contract
+        voyageNumber:
+          type: string
+          description: reference code assigned by the operator for the ship's voyage
+        messageFunctionCode:
+          type: string
+          description: code that provides the function of a message
+        agentIdentification:
+          $ref: '#/components/schemas/AgentIdentification'
+        portID:
+          $ref: '#/components/schemas/PortID'
+        shipID:
+          $ref: '#/components/schemas/ShipID'
+    Authorization:
+      type: object
+      required:
+        - PCSVoyageID
+        - AuthorizationID
+        - AuthorizationStatus
+        - RequirementCode
+        - RequirementDescription
+      properties:
+        PCSVoyageID:
+          type: string
+          description: >-
+            Receipt code made available to the applicant for future status
+            consultation at the time of trip creation
+        AuthorizationID:
+          type: string
+          description: authorization code
+        AuthorizationStatus:
+          type: string
+          description: authorization status
+        RequirementCode:
+          type: string
+          description: Pending code.
+        RequirementDescription:
+          type: string
+          description: description of pendency
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: error message code
+        message:
+          type: string
+          description: error message description
+    CargoDeclaration:
+      type: object
+      required:
+        - transportEquipmentIdentification Number
+        - cargoItemDescriptionGoods
+        - CargoItemGrossVolume
+        - cargoItemGrossWeight
+        - cargoItemHSCode
+        - cargoItemMarksNumbers
+        - cargoItemNumberPackages
+        - cargoItemPackageTypeCoded
+        - nameOfMaster
+        - transportContractNumber
+        - voyageNumber
+        - messageFunctionCode
+        - agentIdentification
+        - portID
+        - shipID
+      properties:
+        transportEquipmentIdentificationNumber:
+          type: string
+          description: >-
+            Identification Code of transport equipament. For containers the code
+            must have be as defined in ISO 6346
+        cargoItemDescriptionGoods:
+          type: string
+          description: Description of packed cargo
+        CargoItemGrossVolume:
+          type: integer
+          description: Gross Volume measure of packed cargo
+        cargoItemGrossWeight:
+          type: integer
+          description: Gross Weight measure of packed cargo
+        cargoItemHSCode:
+          type: string
+          description: >-
+            The Harmonized Commodity Description and Coding System (HS)
+            international standardized commodity code for the packaged cargo
+            being reported.
+        cargoItemMarksNumbers:
+          type: string
+          description: >-
+            identifier assigned by the sender as a means of tracking cargo not
+            transported in bulk.
+        cargoItemNumberPackages:
+          type: integer
+          description: counting of packages
+        cargoItemPackageTypeCoded:
+          type: string
+          description: code of unit measures for a referenced quantity on board
+        nameOfMaster:
+          type: string
+          description: The name of the person responsible for the ship
+        transportContractNumber:
+          type: string
+          description: >-
+            reference number to identify a document that proves a transport
+            contract
+        voyageNumber:
+          type: string
+          description: reference code assigned by the operator for the ship's voyage
+        messageFunctionCode:
+          type: string
+          description: code that provides the function of a message
+        agentIdentification:
+          $ref: '#/components/schemas/AgentIdentification'
+        portID:
+          $ref: '#/components/schemas/PortID'
+        shipID:
+          $ref: '#/components/schemas/ShipID'

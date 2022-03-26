@@ -1,0 +1,285 @@
+openapi: 3.0.3
+servers:
+  - description: PCS Ship Supplier API
+    url: https://pcs-api.its.org.br/api/ship-supplier/0.0.1
+info:
+  description: Rest API for manage Ship Supplier
+  version: 0.0.1
+  title: PCS Ship Supplier API
+  contact:
+    email: contato@its.org.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /ship-supplier/{PCSvoyageID}:
+    post:
+      summary: Maritime agency appoints onboard consumption supplier
+      operationId: appointShipSuplier
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipSupplierNomination'
+    get:
+      summary: >-
+        Consultation for the provision of consumer products on board and
+        services.
+      operationId: getShipSupplier
+      parameters:
+        - name: PCSvoyageID
+          in: path
+          description: voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ShipSupplierNomination'
+                  - $ref: '#/components/schemas/ShipSupplierAcceptance'
+                  - $ref: '#/components/schemas/Authorization'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Updated Ship Supplier Informations
+      operationId: updateShipSupplier
+      parameters:
+        - name: PCSvoyageID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: voyage not foundSome item can’t be changed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipSupplierNomination'
+        description: Updated Ship Supplier object
+        required: true
+    delete:
+      summary: Delete Ship Supplier
+      operationId: deleteShipSupplier
+      parameters:
+        - name: PCSvoyageID
+          in: path
+          description: ID of voyage that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid cnpj supplied
+        '404':
+          description: Maritime Agent not found
+  /ship-supplier-acceptance/{PCSvoyageID}:
+    post:
+      summary: >-
+        The company providing on-board consumer products and services informs
+        acceptance or refusal of supply
+      operationId: acceptanceShipSupplier
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipSupply'
+  /ship-supplier-evaluation/{PCSvoyageID}:
+    post:
+      summary: >-
+        Method used by consenting bodies to update information regarding the
+        analysis of the provision.
+      operationId: evaluationShipSupplier
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipSupply'
+  /ship-supplier-authorization/{PCSvoyageID}:
+    post:
+      summary: Method used by consenting bodies to inform on board supply authorization
+      operationId: authorizationShipSupplier
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+components:
+  schemas:
+    ShipSupplierNomination:
+      type: object
+      required:
+        - PCSVoyageID
+        - CNPJ
+      properties:
+        PCSvoyageID:
+          type: string
+          description: Voyage Number generated by PCS
+        CNPJ:
+          type: string
+          description: CNPJ number of the company responsible for onboard supply
+    ShipSupplierAcceptance:
+      type: object
+      required:
+        - PCSVoyageID
+        - Acceptance
+      properties:
+        PCSvoyageID:
+          type: string
+          description: Voyage Number generated by PCS
+        Acceptance:
+          type: integer
+          description: >-
+            binary, express acceptance or refusal of supply, 0 is accepted 1 is
+            refused
+    Authorization:
+      type: object
+      required:
+        - PCSVoyageID
+        - AuthorizationID
+        - AuthorizationStatus
+        - RequirementCode
+        - RequirementDescription
+      properties:
+        PCSVoyageID:
+          type: string
+          description: >-
+            Receipt code made available to the applicant for future status
+            consultation at the time of trip creation
+        AuthorizationID:
+          type: string
+          description: authorization code
+        AuthorizationStatus:
+          type: string
+          description: authorization status
+        RequirementCode:
+          type: string
+          description: Pending code.
+        RequirementDescription:
+          type: string
+          description: description of pendency
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: error message code
+        message:
+          type: string
+          description: error message description
+    ShipSupplyContent:
+      type: object
+      required:
+        - shipSupplyType
+        - item
+        - quantity
+      properties:
+        shipSupplyType:
+          type: string
+          description: Type of supply, product or service
+        item:
+          type: string
+          description: Description of the item to be supplied.
+        quantity:
+          type: integer
+          description: Quantity of the item to be supplied.
+    ShipSupply:
+      type: object
+      required:
+        - PCSVoyageID
+        - date
+        - ShipSupplyContent
+      properties:
+        PCSvoyageID:
+          type: string
+          description: Voyage Number generated by PCS
+        date:
+          type: string
+          description: On-board consumption supply data.
+        ShipSupplyContent:
+          $ref: '#/components/schemas/ShipSupplyContent'

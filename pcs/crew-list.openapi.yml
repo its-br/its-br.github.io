@@ -1,0 +1,411 @@
+openapi: 3.0.3
+servers:
+  - description: PCS Crew List API
+    url: https://pcs-api.its.org.br/api/crew-list/0.0.1
+info:
+  description: Rest API for manage Crew List
+  version: 0.0.1
+  title: PCS Crew List API
+  contact:
+    email: contato@its.org.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /crew-list/{PCSvoyageID}:
+    post:
+      summary: Creates a crew list on PCS linked to a trip
+      operationId: createCrewList
+      responses:
+        '201':
+          description: Item created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: An existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrewList'
+    get:
+      summary: Query information about crew members
+      operationId: getCrewList
+      parameters:
+        - name: PCSvoyageID
+          in: path
+          description: Voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/CrewList'
+                  - $ref: '#/components/schemas/Authorization'
+            application/xml:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/CrewList'
+                  - $ref: '#/components/schemas/Authorization'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Updated crew list Informations
+      operationId: updateCrewList
+      parameters:
+        - name: PCSvoyageID
+          in: path
+          description: Id of voyage that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Voyage not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrewList'
+        description: Updated Crew List object
+        required: true
+    delete:
+      summary: Delete Crew List
+      operationId: deleteCrewList
+      parameters:
+        - name: PCSvoyageID
+          in: path
+          description: ID of voyage that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Maritime Agent not found
+  /crew-list-evaluation/{PCSvoyageID}:
+    post:
+      summary: Creates a crew list on PCS linked to a trip
+      operationId: createCrewList
+      responses:
+        '201':
+          description: Item created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: An existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+components:
+  schemas:
+    Authorization:
+      type: object
+      required:
+        - PCSVoyageID
+        - AuthorizationID
+        - AuthorizationStatus
+        - RequirementCode
+        - RequirementDescription
+      properties:
+        PCSVoyageID:
+          type: string
+          description: >-
+            Receipt code made available to the applicant for future status
+            consultation at the time of trip creation
+        AuthorizationID:
+          type: string
+          description: authorization code
+        AuthorizationStatus:
+          type: string
+          description: authorization status
+        RequirementCode:
+          type: string
+          description: Pending code.
+        RequirementDescription:
+          type: string
+          description: description of pendency
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: error message code
+        message:
+          type: string
+          description: error message description
+    CrewList:
+      type: object
+      required:
+        - PCSVoyageID
+        - userAgent
+        - ShipID
+        - CrewListContent
+        - VoyageNumber
+        - messageFunctionCode
+      properties:
+        PCSVoyageID:
+          type: integer
+          description: Trip identification code generated by PCS
+        userAgent:
+          $ref: '#/components/schemas/AgentIdentification'
+        ShipID:
+          $ref: '#/components/schemas/ShipID'
+        CrewListContent:
+          $ref: '#/components/schemas/CrewListContent'
+        VoyageNumber:
+          type: string
+          description: An operator-assigned reference code for the ship's voyage.
+        messageFunctionCode:
+          type: string
+          description: Code providing the function of a message.
+    AgentIdentification:
+      type: object
+      required:
+        - agentContactName
+        - agentIdentificationNumber
+        - agentName
+        - authenticationDate
+        - authenticatorName
+        - authenticatorRoleCoded
+      properties:
+        agentContactName:
+          type: string
+          description: The agent's employee contact name.
+        agentIdentificationNumber:
+          type: string
+          description: >-
+            The recognized identification number used by the ship's agent at the
+            port of notification
+        agentName:
+          type: string
+          description: The agent's name at the port of arrival.
+        authenticationDate:
+          type: string
+          description: The authentication date
+        authenticatorName:
+          type: string
+          description: >-
+            The name of the person who attests to the validity of the
+            information transmitted.
+        authenticatorRoleCoded:
+          type: string
+          description: >-
+            A code that provides the role of the person who attests to the
+            validity of the transmitted information
+    ShipID:
+      type: object
+      required:
+        - shipFlagStateCoded
+        - shipIMONumber
+        - shipName
+        - shipStayReferenceNumber
+      properties:
+        shipFlagStateCoded:
+          type: string
+          description: >-
+            The code representing the nationality of the ship shown on your IMO
+            ship certificate. ISO 3166-1 alpha-2 code (code  UN  /  EDIFACT
+            3207)
+        shipIMONumber:
+          type: string
+          description: >-
+            The unique ship identification number shown on your IMO Ship
+            Certificate. (Reference:/ IMO0140)
+        shipName:
+          type: string
+          description: >-
+            The unique ship identification number shown on your IMO Ship
+            Certificate.
+        shipStayReferenceNumber:
+          type: string
+          description: >-
+            Reference number assigned by a port authority to the stay of a ship
+            in port.
+    CrewListContent:
+      type: object
+      required:
+        - crewMemberRankRatingName
+        - crewmemberRankOrRatingcoded
+        - personOnBoardSequenceNumber
+        - dateAndTimeOfArrivalActual
+        - dateAndTimeOfArrivalEstimated
+        - dateAndTimeOfDepartureActual
+        - dateAndTimeOfArrivalEstimated
+        - dateAndTimeOfDepartureActual
+        - dateAndTimeOfDepartureEstimated
+        - lastPortOfCallName
+        - lastPortOfCallCoded
+        - personCountryOfBirthCoded
+        - personDateOfBirth
+        - personFamilyName
+        - personGenderCoded
+        - personGivenName
+        - personIdentityOrTravelDocumentExpiryDate
+        - personIdentityOrTravelDocumentIssuingNationCoded
+        - personIdentityOrTravelDocumentNumber
+        - personIdentityOrTravelDocumentTypeCoded
+        - personNationalityCoded
+        - personPlaceOfBirthName
+        - personTypeCoded
+        - portOfArrivalCoded
+        - portOfArrivalName
+        - portOfDepartureCoded
+        - portOfDepartureName
+        - authenticatorRoleCoded
+      properties:
+        crewMemberRankRatingName:
+          type: string
+          description: >-
+            The description of the rank or classification of the crew member
+            referenced on the vessel.
+        userAgent:
+          type: string
+          description: >-
+            A code retestsenting the classification or classification of the
+            crew member referenced on the vessel.
+        personOnBoardSequenceNumber:
+          type: integer
+          description: >-
+            A number indicating the order of the person referenced in the list
+            of people on board.
+        dateAndTimeOfArrivalActual:
+          type: string
+          description: date and time the ship arrives at a specified location, ATA.
+        dateAndTimeOfArrivalEstimated:
+          type: string
+          description: The date and time the ship must arrive at a specified location, ETA
+        dateAndTimeOfDepartureActual:
+          type: string
+          description: The date and time the ship departs from a specified location, ATD
+        dateAndTimeOfDepartureEstimated:
+          type: string
+          description: >-
+            The date and time the ship is estimated to depart from a specified
+            location, ETD.
+        lastPortOfCallName:
+          type: string
+          description: >-
+            The name and country of the port immediately preceding the port of
+            arrival
+        personCountryOfBirthCoded:
+          type: string
+          description: >-
+            The code representing the country of birth of the referenced person,
+            as shown on the person's identity document.
+        personDateOfBirth:
+          type: string
+          description: >-
+            The date of birth of the referenced person, as shown on the person's
+            identity document
+        lastPortOfCallCoded:
+          type: string
+          description: The last name of the referred person
+        personGenderCoded:
+          type: string
+          description: A code that represents the gender of the referenced person
+        personGivenName:
+          type: string
+          description: The name of the referred person
+        personIdentityOrTravelDocumentExpiryDate:
+          type: string
+          description: >-
+            The expiry date indicated on the referenced person's identity
+            document.
+        personIdentityOrTravelDocumentIssuingNationCoded:
+          type: string
+          description: >-
+            A code representing the nation issuing the presented identity of the
+            referenced person or travel document
+        personIdentityOrTravelDocumentNumber:
+          type: string
+          description: >-
+            The unique tracking number assigned to the identity of the
+            referenced person or travel document by the issuing nation
+        personIdentityOrTravelDocumentTypeCoded:
+          type: string
+          description: >-
+            a code representing the type of identity or travel document
+            presented by the referenced person.
+        personNationalityCoded:
+          type: string
+          description: >-
+            a code that represents the nationality of the referenced person, as
+            shown on the person's identity or travel document.
+        personPlaceOfBirthName:
+          type: string
+          description: The name of the person's birthplace
+        personTypeCoded:
+          type: string
+          description: >-
+            a code that represents the type of person aboard the ship, such as
+            captain, crew member or passenger
+        portOfArrivalCoded:
+          type: string
+          description: The code representing the ship's port of arrival.
+        portOfArrivalName:
+          type: string
+          description: The name and country of the ship's port of arrival
+        portOfDepartureCoded:
+          type: string
+          description: code that represents the port from which the ship departs.
+        portOfDepartureName:
+          type: string
+          description: A name and country of the port from which the ship departs
+        authenticatorRoleCoded:
+          type: string
+          description: >-
+            A code that provides the role of the person who attests to the
+            validity of the transmitted information.

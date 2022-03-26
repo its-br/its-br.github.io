@@ -1,0 +1,408 @@
+openapi: 3.0.3
+servers:
+  - description: PCS Payment API
+    url: https://pcs-api.its.org.br/api/payment/0.0.1
+info:
+  description: Rest API for manage Payment
+  version: 0.0.1
+  title: PCS Payment API
+  contact:
+    email: contato@its.org.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /tax:
+    post:
+      summary: >-
+        Interface for using fee issuing authorities to report pending fee
+        payment
+      operationId: createFeePaymentPending
+      responses:
+        '201':
+          description: item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxID'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TaxID'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaxFee'
+  /payment:
+    post:
+      summary: >-
+        Interface for using fee issuing authorities to report realization of fee
+        payment
+      operationId: informFeePayment
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+  /tax/voyage/{taxID}:
+    get:
+      summary: Interface for querying the payment status of a specific fee
+      operationId: getFeeStatus
+      parameters:
+        - name: taxID
+          in: path
+          description: tax id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxFee'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TaxFee'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /taxes/{PCSvoyageID}:
+    get:
+      summary: Query payment status for fees for a specific voyage
+      operationId: getVoyageFeeStatus
+      parameters:
+        - name: PCSvoyageID
+          in: path
+          description: voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaxFee'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaxFee'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /taxes/agency/{cnpj}:
+    get:
+      summary: Query payment status for fees for a specific maritime agency
+      operationId: getMaritimeAgencyFeeStatus
+      parameters:
+        - name: cnpj
+          in: path
+          description: cnpj of maritime agency that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaxFee'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaxFee'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tax/{taxID}:
+    patch:
+      summary: Update Tax
+      description: >-
+        User interface of tax issuing authorities to update information on a
+        tax, as well as to report receipt of payment.
+      operationId: updateTax
+      parameters:
+        - name: taxID
+          in: path
+          description: ID number of Tax  that need to be updated
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaxFee'
+        description: Set of Information required to create a tax fee
+        required: true
+    delete:
+      summary: Delete Tax
+      operationId: deleteTax
+      parameters:
+        - name: taxID
+          in: path
+          description: ID number of Tax  that need to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /payment/{taxID}:
+    patch:
+      summary: Update Tax
+      description: >-
+        User interface of tax issuing authorities to update information on a
+        tax, as well as to report receipt of payment.
+      operationId: updateTax
+      parameters:
+        - name: taxID
+          in: path
+          description: ID number of Tax  that need to be updated
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+        description: Set of Information required to report payment of a fee
+        required: true
+components:
+  schemas:
+    Boleto:
+      type: object
+      required:
+        - boleto
+      properties:
+        boleto:
+          type: string
+          description: Typeable line of a boleto
+    bankTransfer:
+      type: object
+      required:
+        - bank
+        - agency
+        - account
+        - typeOfAccount
+        - amount
+      properties:
+        bank:
+          type: string
+          description: bank code
+        agency:
+          type: string
+          description: agency number
+        account:
+          type: string
+          description: account number
+        typeOfAccount:
+          type: string
+          description: Account type:/ checking or savings (C or P)
+        amount:
+          type: string
+          description: Amount to be transferred in reais
+        cnpj:
+          type: string
+          description: Account owner's CNPJ number (CPF or CNPJ are mutually exclusive)
+        cpf:
+          type: string
+          description: Account owner's CPF number (CPF or CNPJ are mutually exclusive)
+    PIX:
+      type: object
+      required:
+        - pix
+      properties:
+        pix:
+          type: string
+          description: Pix code
+    PaymentLink:
+      type: object
+      required:
+        - paymentLink
+      properties:
+        paymentLink:
+          type: string
+          description: URL Payment
+    TaxFee:
+      type: object
+      required:
+        - PCSVoyageID
+        - taxFeeCode
+        - currency
+        - totalAmount
+        - emissionDate
+        - dueDate
+        - paymentMethod
+      properties:
+        PCSVoyageID:
+          type: string
+          description: Travel code generated by PCS
+        taxFeeCode:
+          type: string
+          description: Tax code
+        taxFeeName:
+          type: string
+          description: Rate name (required when taxFeeCode = OTHER)
+        additionalInfo:
+          type: string
+          description: Additional fee-related information (free text).
+        currency:
+          type: string
+          description: >-
+            Currency corresponding to the fee amount according to ISO 4217
+            standard
+        totalAmount:
+          type: string
+          description: Total amount for fee payment.
+        emissionDate:
+          type: string
+          description: >-
+            Fee issue date. The field must follow the standard period format
+            defined by ISO 8601
+        dueDate:
+          type: string
+          description: >-
+            Fee payment due date. The field must follow the standard period
+            format defined by ISO 8601
+        paymentMethod:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: Fee Payment Method Code. (BOL, DEP, PIX, TRA, TES, OUT)
+        paymentInfo:
+          description: >-
+            Schema of payment informations required for payment method defined
+            in paymentMethod
+          oneOf:
+            - $ref: '#/components/schemas/Boleto'
+            - $ref: '#/components/schemas/bankTransfer'
+            - $ref: '#/components/schemas/PIX'
+            - $ref: '#/components/schemas/PaymentLink'
+    TaxID:
+      type: object
+      required:
+        - taxID
+      properties:
+        taxID:
+          type: string
+          description: Tax indentification
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: error message code
+        message:
+          type: string
+          description: error message description
+    Payment:
+      type: object
+      required:
+        - taxFeeID
+        - status
+        - paymentDate
+        - paymentMethod
+        - paymentConfirmationID
+      properties:
+        taxFeeID:
+          type: string
+          description: fee indentification
+        status:
+          type: string
+          description: rate status code
+        paymentDate:
+          type: string
+          description: payment date
+        paymentMethod:
+          type: string
+          description: payment method
+        paymentConfirmationID:
+          type: string
+          description: Field for sending proof of payment
