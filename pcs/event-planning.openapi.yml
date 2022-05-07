@@ -92,7 +92,7 @@ components:
     EventTimes:
       type: object
       required:
-        - eventPCSCode
+        - transportCallID
         - eventCreatedDateTime
         - eventTime
         - eventType
@@ -100,23 +100,26 @@ components:
         - operationsEventTypeCode
         - eventClassifierCode
       properties:
-        eventPCSCode:
+        transportCallID:
+          description: The unique identifier for a transport call
           type: string
-          minLength: 4
-          maxLength: 4
-          description: Event status code
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
         eventCreatedDateTime:
           type: string
           format: date-time
+          example: '2021-01-09T14:12:56Z'
         eventTime:
           type: string
           format: date-time
+          example: '2021-01-09T14:12:56Z'
         eventType:
           type: string
           enum:
             - STRT
             - CMPL
           description: Event type, whether it is starting or ending
+          example: STRT
         transportEventTypeCode:
           type: string
           enum:
@@ -125,6 +128,7 @@ components:
             - EST
             - REQ
           description: Transport event type
+          example: EST
         operationsEventTypeCode:
           type: string
           enum:
@@ -132,9 +136,11 @@ components:
             - OPERATION
             - PILOTIME
           description: Nature of the event
+          example: TRANSPORT
         eventClassifierCode:
           type: string
           enum:
             - ARRI
             - DEPA
           description: Event classification
+          example: ARRI

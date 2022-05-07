@@ -16,6 +16,13 @@ paths:
     post:
       summary: Consenting agency issues authorization
       operationId: issueAuthorization
+      parameters:
+        - name: PCSvoyageID
+          in: path
+          description: Voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:

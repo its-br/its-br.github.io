@@ -144,22 +144,41 @@ components:
         - cnpj
         - portFacilityType
         - portFacilityCode
+        - facilityTypeCode
+        - facilityCode
         - phone
         - email
         - address
       properties:
         cnpj:
           type: string
-          example: '12345678901234'
+          description: cnpj number of the Port Facility
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
         userAgent:
           type: string
-          description: cnpj Number of user agent
+          description: cnpj number of user agent (optional)
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
         portFacilityType:
           type: string
           description: type of port facility defined as DCSA pattern
+          example: POTE
         portFacilityCode:
           type: string
           description: Registry code of port facility defined as in SMDG database
+        facilityTypeCode:
+          type: string
+          description: The code to identify the specific type of facility.
+          maxLength: 4
+          example: POTE
+        facilityCode:
+          type: string
+          description: The code used for identifying the specific facility.
+          maxLength: 11
+          example: AEAUHADT
         email:
           type: string
           format: email
@@ -179,12 +198,18 @@ components:
         dcsaCode:
           type: string
           description: DCSA Code with 4 characters
+          example: POTE
         name:
           type: string
           description: Port facility name
+          example: Port terminal
         description:
           type: string
           description: Description of port facility type
+          example: >-
+            Port terminal is a facility located adjacent to a waterway where
+            containers are loaded, moved, or discharged onto/from sea-going
+            vessels and barges
     Address:
       type: object
       required:
@@ -195,6 +220,7 @@ components:
       properties:
         address:
           type: string
+          example: Av. Brasil
         state:
           type: string
           example: Sao Paulo
@@ -203,3 +229,4 @@ components:
           example: Sao Paulo
         postalCode:
           type: string
+          example: 11111-111

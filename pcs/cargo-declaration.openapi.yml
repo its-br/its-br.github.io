@@ -225,11 +225,14 @@ components:
           description: >-
             The unique ship identification number shown on your IMO Ship
             Certificate. (Reference:/ IMO0140)
+          maxLength: 7
+          example: '1801323'
         shipName:
           type: string
           description: >-
             The unique ship identification number shown on your IMO Ship
             Certificate.
+          example: Vessel A
         shipStayReferenceNumber:
           type: string
           description: >-

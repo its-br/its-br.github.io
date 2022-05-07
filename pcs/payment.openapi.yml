@@ -224,7 +224,7 @@ paths:
       description: >-
         User interface of tax issuing authorities to update information on a
         tax, as well as to report receipt of payment.
-      operationId: updateTax
+      operationId: updatePayment
       parameters:
         - name: taxID
           in: path
@@ -288,9 +288,15 @@ components:
         cnpj:
           type: string
           description: Account owner's CNPJ number (CPF or CNPJ are mutually exclusive)
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
         cpf:
           type: string
           description: Account owner's CPF number (CPF or CNPJ are mutually exclusive)
+          minLength: 11
+          maxLength: 11
+          example: '99999999999'
     PIX:
       type: object
       required:
@@ -299,6 +305,7 @@ components:
         pix:
           type: string
           description: Pix code
+          example: abcdefghijklm
     PaymentLink:
       type: object
       required:

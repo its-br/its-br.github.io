@@ -150,7 +150,10 @@ components:
       properties:
         cnpj:
           type: string
-          example: '12345678901234'
+          description: CNPJ number of the actor
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
         email:
           type: string
           format: email
@@ -186,6 +189,7 @@ components:
       properties:
         address:
           type: string
+          example: Av. Brasil
         state:
           type: string
           example: Sao Paulo
@@ -194,3 +198,4 @@ components:
           example: Sao Paulo
         postalCode:
           type: string
+          example: 11111-111

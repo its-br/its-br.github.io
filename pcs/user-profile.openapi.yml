@@ -72,7 +72,7 @@ components:
           type: string
           minLength: 14
           maxLength: 14
-          example: '12345678901234'
+          example: '99999999999999'
         email:
           type: string
           format: email

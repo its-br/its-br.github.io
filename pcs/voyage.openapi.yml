@@ -93,15 +93,23 @@ paths:
       operationId: getListVoyagesAcceptance
       parameters:
         - in: query
-          name: startDate
-          description: Start date for consultation
+          name: startDateISO
+          description: >-
+            Start date for consultation. The value is populated in ISO 8601 Date
+            format.
           schema:
             type: string
+            format: date
+            example: 14-03-2022
         - in: query
-          name: dateRange
-          description: Consultation period
+          name: dateRangeISO
+          description: >-
+            Consultation period. The duration is populated in ISO 8601 Duration
+            format.
           schema:
             type: string
+            format: iso8601
+            example: P4W
       responses:
         '200':
           description: successful operation
@@ -157,7 +165,7 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           description: Voyage not found
-  /voyage-complete-data/{voyageID}:
+  /voyage/{voyageID}:
     get:
       summary: Get voyage by PCSVoyageID
       operationId: getVoyage
@@ -189,7 +197,6 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           description: voyage not found
-  /voyage-update/{voyageID}:
     patch:
       summary: Updated Voyage Informations
       operationId: updateVoyage
@@ -221,7 +228,6 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           description: Voyage not found
-  /voyage/{voyageID}:
     delete:
       summary: Delete Voyage
       operationId: deleteVoyage
@@ -253,14 +259,22 @@ paths:
       parameters:
         - in: query
           name: startDate
-          description: Start date for consultation
+          description: >-
+            Start date for consultation. The value is populated in ISO 8601 Date
+            format.
           schema:
             type: string
+            format: date
+            example: '2022-01-01'
         - in: query
           name: dateRange
-          description: Consultation period
+          description: >-
+            Consultation period. The duration is populated in ISO 8601 Duration
+            format.
           schema:
             type: string
+            format: iso8601
+            example: P4W
       responses:
         '200':
           description: Successful operation
@@ -301,11 +315,7 @@ components:
           type: string
           description: error message description
     Response:
-      type: array
-      items:
-        allOf:
-          - $ref: '#/components/schemas/VoyageCreation'
-          - $ref: '#/components/schemas/PCSVoyageStatus'
+      $ref: '#/components/schemas/PCSVoyageCompleteInfo'
     PCSVoyageCompleteInfo:
       type: array
       items:
@@ -327,15 +337,22 @@ components:
           description: >-
             A inscrição para a qual este evento é publicado, emitido pelo
             armador
+          example: jlke123j
         vesselOperatorCarrierCode:
           type: string
           description: O identificador do operador da embarcação publicando o evento
+          example: MAEU
+          maxLength: 10
         vesselOperatorCarrierCodeListProvider:
           type: string
           description: >-
             O parâmetro identifica o provedor de lista de códigos usado para os
             códigos da operadora e da operadora parceira. Os valores possíveis
             são: SMDG, NMFTA (código SCAC)
+          enum:
+            - SMDG
+            - NMFTA
+          example: NMFTA
         vesselPartnerCarrierCode:
           type: string
           description: >-
@@ -343,6 +360,9 @@ components:
             pretendida. Este campo permite especificando vários valores
             separados por vírgula se houver mais de um parceiro de navio
             envolvido.
+          example: MSCU,HLCU
+          maxLength: 10
+          minLength: 10
         vesselPartnerCarrierCodeListProvider:
           type: string
           description: >-
@@ -351,12 +371,24 @@ components:
             valores possíveis são: SMDG, NMFTA (código SCAC). Se o "código da
             transportadora do parceiro da embarcação" for preenchido, o campo do
             provedor da lista de códigos também deve ser preenchido.
+          enum:
+            - SMDG
+            - NMFTA
+          example: NMFTA
         startDate:
           type: string
-          description: Estrutura dos elementos de dados relacionados à data de início.
+          description: >-
+            Estrutura dos elementos de dados relacionados à data de início. The
+            value is populated in ISO 8601 Date format.
+          format: date
+          example: '2022-01-01'
         dateRange:
           type: string
-          description: Estrutura dos elementos de dados relacionados ao período.
+          description: >-
+            Estrutura dos elementos de dados relacionados ao período. The
+            duration is populated in ISO 8601 Duration format.
+          format: iso8601
+          example: P4W
         VoyageGeneralInfo:
           $ref: '#/components/schemas/VoyageGeneralInfo'
         PortCallGeneralInfo:
@@ -372,34 +404,54 @@ components:
         subscriptionID:
           type: string
           description: The application for which this event is published
+          example: jlke123j
         vesselOperatorCarrierCode:
           type: string
           description: vessel operator identifier publishing the event
+          example: MAEU
+          maxLength: 10
         vesselOperatorCarrierCodeListProvider:
-          type: integer
+          type: string
           description: >-
             The parameter identifies the codelist provider used for operator and
             partner operator codes. Possible values are:/ SMDG or NMFTA
+          enum:
+            - SMDG
+            - NMFTA
+          example: NMFTA
         vesselPartnerCarrierCode:
           type: string
           description: >-
             The identifier of the ship's partner for which the current message
             is intended. This field allows specifying multiple values separated
             by commas if there is more than one ship partner involved.
+          example: MSCU,HLCU
+          maxLength: 10
+          minLength: 10
         vesselPartnerCarrierCodeListProvider:
           type: string
           description: >-
             The parameter identifies the codelist provider used for the vessel
             operator and partner carrier codes. Possible values are:/ SMDG or
             NMFTA
+          enum:
+            - SMDG
+            - NMFTA
+          example: NMFTA
         startDate:
           type: string
-          description: Start date of receiving the update data set.
+          description: >-
+            Start date of receiving the update data set. The value is populated
+            in ISO 8601 Date format.
+          format: date
+          example: '2022-01-01'
         rangeDate:
-          type: integer
+          type: string
           description: >-
             The period for which the roster information is sent to the
-            requester.
+            requester. The duration is populated in ISO 8601 Duration format.
+          format: iso8601
+          example: P4W
         voyageGeneralStatus:
           $ref: '#/components/schemas/VoyageGeneralStatus'
     ServiceProvidersAcceptance:
@@ -414,11 +466,17 @@ components:
             PCSvoyageID:
               type: string
               description: Voyage Number generated by PCS
+              minLength: 20
+              maxLength: 20
+              example: PCS00000123456789001
             receiptID:
               type: string
               description: >-
                 Receipt code made available to the applicant for future status
                 consultation at the time of trip creation
+              minLength: 20
+              maxLength: 20
+              example: PCS00000123456789001
           oneOf:
             - required:
                 - PCSvoyageID
@@ -433,6 +491,7 @@ components:
             Field where the mooring company or tugboat must express acceptance
             or refusal of the operation informed by the shipping agent, related
             to a trip (PCSVoyageID)
+          example: Accepted
     VoyageCreationStatus:
       type: object
       required:
@@ -485,49 +544,38 @@ components:
     VoyageCreation:
       type: object
       required:
-        - cnpj
         - carrierDetails
         - voyageDetails
-        - transportCallQty
         - transportCall
-        - maritimeAgency
-        - callBack
+        - otherMaritimeAgency
+        - maritimeAgencyCallBack
       properties:
-        cnpj:
-          type: integer
-          description: cnpj number
-          example: 12345678901234
-        userAgent:
-          type: integer
-          description: User Agent's cnpj number
-          example: 12345678901234
         carrierDetails:
           $ref: '#/components/schemas/CarrierDetails'
-        voyageDetails:
-          $ref: '#/components/schemas/VoyageDetails'
-        transportCallQty:
-          type: integer
-          description: quantity of stops in port
+        carrierVoyageDetails:
+          $ref: '#/components/schemas/CarrierVoyageDetails'
         transportCall:
           type: array
           items:
             $ref: '#/components/schemas/TransportCall'
-        maritimeAgency:
+        otherMaritimeAgency:
           type: array
           items:
-            $ref: '#/components/schemas/MaritimeAgency'
-        callBack:
-          $ref: '#/components/schemas/CallBack'
+            $ref: '#/components/schemas/OtherMaritimeAgency'
+        maitimeAgencyCallBack:
+          $ref: '#/components/schemas/MaritimeAgencyCallBack'
     VoyageUpdate:
       type: object
       required:
         - cargo
-        - callBack
+        - maritimeAgencyCallBack
       properties:
         userAgent:
-          type: integer
+          type: string
           description: User Agent's cnpj number
-          example: 12345678901234
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
         voyage:
           $ref: '#/components/schemas/VoyageDetails'
         numTransportCall:
@@ -535,12 +583,61 @@ components:
           description: number of stops in port
         transportCall:
           $ref: '#/components/schemas/TransportCall'
-        maritimeAgency:
-          $ref: '#/components/schemas/MaritimeAgency'
-        callBack:
-          $ref: '#/components/schemas/CallBack'
+        OtherMaritimeAgency:
+          $ref: '#/components/schemas/OtherMaritimeAgency'
+        maritimeAgencyCallBack:
+          $ref: '#/components/schemas/MaritimeAgencyCallBack'
     ServiceMaritimeAgencyAcceptance:
       $ref: '#/components/schemas/ServiceProvidersAcceptance'
+    EventStatus:
+      type: object
+      required:
+        - berthingStatusCode
+        - pilotBoardingPlaceStatusCode
+        - startOperationStatusCode
+        - completionOperationStatusCode
+        - unberthingStatusCode
+      properties:
+        berthingStatusCode:
+          type: string
+          description: >-
+            Travel status code in relation to the berthing event, as per status
+            codes
+          minLength: 4
+          maxLength: 4
+          example: B001
+        pilotBoardingPlaceStatusCode:
+          type: string
+          description: >-
+            Travel status code in relation to the pilot boarding event, as per
+            status codes
+          minLength: 4
+          maxLength: 4
+          example: P001
+        startOperationStatusCode:
+          type: string
+          description: >-
+            Travel status code in relation to the start of operation event, as
+            per status codes
+          minLength: 4
+          maxLength: 4
+          example: S001
+        completionOperationStatusCode:
+          type: string
+          description: >-
+            Travel status code in relation to the completion of operation event,
+            as per status codes
+          minLength: 4
+          maxLength: 4
+          example: C001
+        unberthingStatusCode:
+          type: string
+          description: >-
+            Travel status code in relation to the unberthing event, as per
+            status codes
+          minLength: 4
+          maxLength: 4
+          example: D001
     CarrierDetails:
       type: object
       required:
@@ -550,10 +647,16 @@ components:
         listProvider:
           type: string
           description: id of provider of cadastry code for carrier (SMDG or NMFTA)
+          enum:
+            - SMDG
+            - NMFTA
+          example: NMFTA
         carrierCode:
           type: string
           description: code of carrier
-    VoyageDetails:
+          example: MSCU
+          maxLength: 10
+    CarrierVoyageDetails:
       type: object
       required:
         - carrierVoyageNumber
@@ -563,43 +666,67 @@ components:
         carrierVoyageNumber:
           type: string
           description: Voyage Id as DCSA Data Model
+          example: 2015W
         vesselIMO:
           type: string
           description: IMO code of ship as Lloyd's Register.
+          maxLength: 7
+          example: '1801323'
         UNLocationCode:
           type: string
           description: city of destiny port code as UN/CEFACT
+          maxLength: 5
+          example: BRSSZ
     TransportCall:
       type: object
       required:
-        - facilityTypeCode
-        - facilityCode
+        - transportCallID
+        - portFacilityTypeDcsaCode
+        - portFacilityCnpj
       properties:
-        facilityTypeCode:
+        transportCallID:
           type: string
-          description: ID of transport call
-        facilityCode:
+          description: ID uniquely identifying a transport call, to filter events by.
+          example: 123e4567-e89b-12d3-a456-426614174000
+        portFacilityTypeDcsaCode:
           type: string
-          description: ID code defined by DCSA
-        mooringOperator:
+          description: Code of port facility defined by DSCA
+          example: POTE
+        portFacilityCnpj:
+          type: string
+          description: CNPJ of port facility
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
+        mooringOperatorCnpj:
           type: string
           description: CNPJ of responsible for mooring
-        tugOperator:
-          type: integer
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
+        tugboatCompanyCnpj:
+          type: string
           description: CNPJ of Tugboat Operator
-    MaritimeAgency:
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
+    OtherMaritimeAgency:
       type: object
       required:
-        - maritimeAgencyID
+        - maritimeAgencyCnpj
         - responsabilityCODE
       properties:
-        maritimeAgencyID:
-          type: integer
+        maritimeAgencyCnpj:
+          type: string
           description: cnjp number of maritime agency
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
         responsabilityCODE:
-          type: integer
+          type: string
           description: 000 code means all responsability
-    CallBack:
+          example: '000'
+    MaritimeAgencyCallBack:
       type: object
       required:
         - callBackURL
@@ -609,65 +736,22 @@ components:
         callBackURL:
           type: string
           description: Url path by which PCS should send the trip data update set
+          format: uri
+          example: https://myserver.com/send/callback/here
         startDate:
           type: string
-          description: Start date of receiving the update data set.
+          description: >-
+            Start date of receiving the update data set. The value is populated
+            in ISO 8601 Date format.
+          format: date
+          example: '2022-01-01'
         rangeDate:
-          type: integer
+          type: string
           description: >-
             The period for which the roster information is sent to the
-            requester.
-    VoyageGeneralStatus:
-      type: object
-      required:
-        - carrierServiceCode
-        - vesselIMOnumber
-        - vesselName
-        - facilityTypeCode
-        - facilityCode
-      properties:
-        carrierServiceCode:
-          type: string
-          description: The code of the service to which the schedule details are published.
-        vesselIMOnumber:
-          type: string
-          description: >-
-            The identifier of the vessel for which schedule details are
-            published.
-        vesselName:
-          type: string
-          description: The name of the vessel identified by the IMO number.
-        carrierVoyageNumber:
-          type: string
-          description: >-
-            The ship operator has assigned a voyage number to the respective
-            voyage.
-        UNLocationCode:
-          type: string
-          description: The UN location code identifies a location towards a city
-        UNLocationName:
-          type: string
-          description: The name UN location idenified at UNLocationCode
-        transportCallNumber:
-          type: integer
-          description: >-
-            The field contains the sequence of calls for installations within
-            the port.
-        facilityTypeCode:
-          type: string
-          description: The four-character DCSA code to identify the facility type.
-        facilityCode:
-          type: string
-          description: >-
-            The code used to identify the specific port terminal being called. A
-            default value of 'other facility' is used if a code has not been
-            assigned to a facility. SMDG reference codes are used for this
-            attribute.
-        otherFacility:
-          type: string
-          description: >-
-            Alternative way to capture installation details when no standardized
-            DCSA installation code can be found.
+            requester. The duration is populated in ISO 8601 Duration format.
+          format: iso8601
+          example: P4W
     VoyageGeneralInfo:
       type: object
       required:
@@ -680,30 +764,39 @@ components:
         carrierServiceCode:
           type: string
           description: service code wich programation details are published
+          example: FE1
         vesselIMOnumber:
           type: string
           description: >-
             O identificador da embarcação para a qual os detalhes do cronograma
             são publicados. Dependendo do tipo de programação, isso pode não
             estar disponível ainda.
+          maxLength: 7
+          example: '1801323'
         vesselName:
           type: string
           description: O nome do navio identificado pelo número IMO.
+          example: Vessel A
         carrierVoyageNumber:
           type: string
           description: >-
             O operador do navio atribuiu um número de viagem para a respectiva
             viagem.
+          example: 2015W
+          maxLength: 50
         UNLocationCode:
           type: string
+          maxLength: 5
           description: >-
             O código de localização da ONU identifica uma localização no sentido
             de uma cidade / vila / vila.
+          example: BRSSZ
         UNLocationName:
           type: string
           description: >-
             O nome do local da ONU identificado pelo código de local da ONU
             acima.
+          example: Santos
         transportCallNumber:
           type: string
           description: >-
@@ -714,6 +807,8 @@ components:
           description: >-
             O código DCSA de quatro caracteres para identificar o tipo de
             instalação.
+          maxLength: 4
+          example: POTE
         facilityCode:
           type: string
           description: >-
@@ -721,11 +816,15 @@ components:
             sendo chamado. Um valor padrão de 'outra instalação' é usado se um
             código não foi atribuído a uma instalação. Os códigos de referência
             SMDG são usados para este atributo.
+          maxLength: 11
+          example: AEAUHADT
         otherFacility:
           type: string
           description: >-
             A forma alternativa de capturar os detalhes da instalação, quando
             nenhum código de instalação DCSA padronizado pode ser encontrado.
+          maxLength: 50
+          example: endereço ou localização
     PortCallGeneralInfo:
       type: object
       required:
@@ -763,47 +862,91 @@ components:
             As informações de texto livre fornecidas pelo operador da embarcação
             sobre os motivos da mudança na programação e / ou planos para
             mitigar o deslizamento da programação.
-    EventStatus:
+    VoyageDetails:
       type: object
       required:
-        - berthingStatusCode
-        - pilotBoardingPlaceStatusCode
-        - startOperationStatusCode
-        - completionOperationStatusCode
-        - unberthingStatusCode
+        - carrierVoyageNumber
+        - vesselIMO
+        - UNLocationCode
       properties:
-        berthingStatusCode:
+        carrierVoyageNumber:
           type: string
-          minLength: 4
-          maxLength: 4
-          description: >-
-            Travel status code in relation to the berthing event, as per status
-            codes
-        pilotBoardingPlaceStatusCode:
+          description: Voyage Id as DCSA Data Model
+          example: 2015W
+        vesselIMO:
           type: string
-          minLength: 4
-          maxLength: 4
-          description: >-
-            Travel status code in relation to the pilot boarding event, as per
-            status codes
-        startOperationStatusCode:
+          description: IMO code of ship as Lloyd's Register.
+          maxLength: 7
+          example: '1801323'
+        UNLocationCode:
           type: string
-          minLength: 4
-          maxLength: 4
-          description: >-
-            Travel status code in relation to the start of operation event, as
-            per status codes
-        completionOperationStatusCode:
+          description: city of destiny port code as UN/CEFACT
+          maxLength: 5
+          example: BRSSZ
+    VoyageGeneralStatus:
+      type: object
+      required:
+        - carrierServiceCode
+        - vesselIMOnumber
+        - vesselName
+        - facilityTypeCode
+        - facilityCode
+      properties:
+        carrierServiceCode:
           type: string
-          minLength: 4
-          maxLength: 4
-          description: >-
-            Travel status code in relation to the completion of operation event,
-            as per status codes
-        unberthingStatusCode:
+          description: The code of the service to which the schedule details are published.
+          example: FE1
+        vesselIMOnumber:
           type: string
-          minLength: 4
-          maxLength: 4
           description: >-
-            Travel status code in relation to the unberthing event, as per
-            status codes
+            The identifier of the vessel for which schedule details are
+            published.
+          maxLength: 7
+          example: '1801323'
+        vesselName:
+          type: string
+          description: The name of the vessel identified by the IMO number.
+          example: Vessel A
+        carrierVoyageNumber:
+          type: string
+          description: >-
+            The ship operator has assigned a voyage number to the respective
+            voyage.
+          example: 2015W
+          maxLength: 50
+        UNLocationCode:
+          type: string
+          description: The UN location code identifies a location towards a city
+          maxLength: 5
+          example: BRSSZ
+        UNLocationName:
+          type: string
+          description: The name UN location idenified at UNLocationCode
+          example: Santos
+        transportCallNumber:
+          type: integer
+          description: >-
+            The field contains the sequence of calls for installations within
+            the port.
+          example: 1
+        facilityTypeCode:
+          type: string
+          description: The four-character DCSA code to identify the facility type.
+          maxLength: 4
+          example: POTE
+        facilityCode:
+          type: string
+          description: >-
+            The code used to identify the specific port terminal being called. A
+            default value of 'other facility' is used if a code has not been
+            assigned to a facility. SMDG reference codes are used for this
+            attribute.
+          maxLength: 11
+          example: AEAUHADT
+        otherFacility:
+          type: string
+          description: >-
+            Alternative way to capture installation details when no standardized
+            DCSA installation code can be found.
+          maxLength: 50
+          example: endereço ou localização
