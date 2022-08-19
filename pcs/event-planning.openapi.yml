@@ -20,6 +20,16 @@ paths:
   /event-planning/{PCSVoyageID}:
     post:
       parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
         - name: PCSVoyageID
           in: path
           description: Voyage id that needs to be fetched
@@ -51,6 +61,16 @@ paths:
       summary: Consult the list of times of events related to the berthing
       operationId: getVoyagesPlanning
       parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
         - name: PCSVoyageID
           in: path
           description: Voyage id that needs to be fetched
@@ -85,9 +105,13 @@ components:
       properties:
         code:
           type: string
+          minLength: 5
+          maxLength: 5
           description: error message code
         message:
           type: string
+          minLength: 1
+          maxLength: 500
           description: error message description
     EventTimes:
       type: object

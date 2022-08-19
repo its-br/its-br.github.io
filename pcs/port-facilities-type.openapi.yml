@@ -15,6 +15,17 @@ paths:
   /port-facilitiy-type:
     post:
       summary: adds a Port Facilitiy item
+      parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
       operationId: addPortFacilitiy
       description: Adds an item to the PCS
       responses:
@@ -40,6 +51,17 @@ paths:
   /port-facility-types:
     get:
       summary: Get Port Facilities by cnpj
+      parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
       operationId: getPortFacilities
       responses:
         '200':
@@ -72,6 +94,16 @@ paths:
       description: Update Port Facilitiy type
       operationId: updatePortFacilitiesType
       parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
         - name: dcsaCode
           in: path
           description: DCSA code of port facility type that needs to be fetched
@@ -104,6 +136,16 @@ paths:
       description: Delete Port Facility Type
       operationId: deletePortFacilitiesType
       parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
         - name: dcsaCode
           in: path
           description: DCSA code of port facility type that needs to be fetched
@@ -134,9 +176,13 @@ components:
       properties:
         code:
           type: string
+          minLength: 5
+          maxLength: 5
           description: error message code
         message:
           type: string
+          minLength: 1
+          maxLength: 500
           description: error message description
     PortFacilityRegistration:
       type: object
@@ -146,6 +192,7 @@ components:
         - portFacilityCode
         - facilityTypeCode
         - facilityCode
+        - name
         - phone
         - email
         - address
@@ -179,6 +226,9 @@ components:
           description: The code used for identifying the specific facility.
           maxLength: 11
           example: AEAUHADT
+        name:
+          type: string
+          example: Acme
         email:
           type: string
           format: email

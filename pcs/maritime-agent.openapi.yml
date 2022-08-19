@@ -16,6 +16,17 @@ paths:
     post:
       summary: adds a Maritime Agent item
       operationId: addMaritimeAgent
+      parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
       description: Adds an item to the PCS
       responses:
         '201':
@@ -43,6 +54,17 @@ paths:
         Links a attorney to the actor's registration, authorizing him/her to
         represent him/her in the use of PCS services
       operationId: bindUserAgent
+      parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
       description: Link an Attorney
       responses:
         '201':
@@ -69,6 +91,16 @@ paths:
       summary: Get Maritime Agent by cnpj
       operationId: getMaritimeAgent
       parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
         - name: cnpj
           in: path
           description: The cnpj number that needs to be fetched.
@@ -101,6 +133,16 @@ paths:
       description: Update Maritime Agent, need the same cnpj in User Certificate.
       operationId: updateMaritimeAgent
       parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
         - name: cnpj
           in: path
           description: Cnpj that need to be updated
@@ -133,6 +175,16 @@ paths:
       description: Update Maritime Agent, need the same cnpj in User Certificate.
       operationId: deleteMaritimeAgent
       parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
         - name: cnpj
           in: path
           description: The cnpj that needs to be deleted
@@ -169,13 +221,16 @@ components:
           minLength: 14
           maxLength: 14
           example: '99999999999999'
+        razaoSocial:
+          type: string
+          example: ACME INC.
+        phone:
+          type: string
+          example: (11) 9 9999 9999
         email:
           type: string
           format: email
           example: acme@acme.com
-        phone:
-          type: string
-          example: (11) 9 9999 9999
         address:
           $ref: '#/components/schemas/Address'
     Error:
@@ -186,9 +241,13 @@ components:
       properties:
         code:
           type: string
+          minLength: 5
+          maxLength: 5
           description: error message code
         message:
           type: string
+          minLength: 1
+          maxLength: 500
           description: error message description
     UserAgentRegistration:
       type: object
@@ -198,10 +257,14 @@ components:
       properties:
         cnpj:
           type: string
+          minLength: 14
+          maxLength: 14
           description: cnpj number of the actor
           example: '99999999999999'
         cnpjUserAgent:
           type: string
+          minLength: 14
+          maxLength: 14
           description: cnpj number of the user agent
           example: '99999999999999'
     Address:

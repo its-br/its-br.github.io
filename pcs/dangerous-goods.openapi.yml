@@ -12,12 +12,11 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 paths:
-  /Dangerous-cargo/{PCSvoyageID}:
+  /dangerous-cargo/{PCSVoyageID}:
     post:
-      summary: Creates a hazardous cargo list in PCS linked to a trip
-      operationId: createCargoList
+      summary: Creates a hazardous cargo list in PCS linked to a voyage
       parameters:
-        - name: PCSvoyageID
+        - name: PCSVoyageID
           in: path
           description: voyage id that needs to be fetched
           required: true
@@ -42,6 +41,117 @@ paths:
                 $ref: '#/components/schemas/Error'
         '409':
           description: an existing item already exists
+    get:
+      summary: get a hazardous cargo list in PCS linked to a voyage
+      parameters:
+        - name: PCSVoyageID
+          in: path
+          description: voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: update a hazardous cargo list in PCS linked to a voyage
+      parameters:
+        - name: PCSVoyageID
+          in: path
+          description: voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Some item can`t be changed
+    delete:
+      summary: delete a hazardous cargo list in PCS linked to a voyage
+      parameters:
+        - name: PCSVoyageID
+          in: path
+          description: voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Item Not fount
+  /dangerous-cargo-evaluation/{PCSVoyageID}:
+    post:
+      summary: update information regarding hazardous cargo analysis.
+      parameters:
+        - name: PCSVoyageID
+          in: path
+          description: voyage id that needs to be fetched
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Authorization'
+      responses:
+        '201':
+          description: Item created
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: an existing item already exists
 components:
   schemas:
     Error:
@@ -52,18 +162,22 @@ components:
       properties:
         code:
           type: string
+          minLength: 5
+          maxLength: 5
           description: error message code
         message:
           type: string
+          minLength: 1
+          maxLength: 500
           description: error message description
     DangerousGoods:
       type: object
       required:
         - PCSVoyageID
-        - PortID
-        - ShipID
-        - AgentSpecificInformation
-        - DangerousGoodsContent
+        - portID
+        - shipID
+        - agentSpecificInformation
+        - dangerousGoodsContent
       properties:
         PCSVoyageID:
           type: string
@@ -71,14 +185,45 @@ components:
           minLength: 20
           maxLength: 20
           example: PCS00000123456789001
-        PortID:
+        portID:
           $ref: '#/components/schemas/PortID'
-        ShipID:
+        shipID:
           $ref: '#/components/schemas/ShipID'
-        AgentSpecificInformation:
+        agentSpecificInformation:
           $ref: '#/components/schemas/AgentSpecificInformation'
-        DangerousGoodsContent:
-          $ref: '#/components/schemas/DangerousGoodsContent'
+        dangerousGoodsContent:
+          type: array
+          items:
+            $ref: '#/components/schemas/DangerousGoodsContent'
+    Authorization:
+      type: object
+      required:
+        - PCSVoyageID
+        - authorizationID
+        - authorizationStatus
+        - requirementCode
+        - requirementDescription
+      properties:
+        PCSVoyageID:
+          type: string
+          description: Trip identification code generated by PCS
+          minLength: 20
+          maxLength: 20
+          example: PCS00000123456789001
+        authorizationID:
+          type: string
+          description: authorization code
+        authorizationStatus:
+          type: string
+          description: authorization status
+        requirementCode:
+          type: array
+          items:
+            type: string
+            description: Pending code.
+        requirementDescription:
+          type: string
+          description: description of pendency
     PortID:
       type: object
       required:
@@ -212,8 +357,8 @@ components:
     DangerousGoodsContent:
       type: object
       required:
-        - TransportEquipmentIdentificationNumber
-        - CargoItemMarksAndNumbers
+        - transportEquipmentIdentificationNumber
+        - cargoItemMarksAndNumbers
         - stowagePositionOnboard
         - dangerousGoodsEmsNumber
         - dangerousGoodsFlashpoint
@@ -236,10 +381,10 @@ components:
         - dangerousGoodsRegulationCoded
         - messageFunctionCode
       properties:
-        TransportEquipmentIdentificationNumber:
+        transportEquipmentIdentificationNumber:
           type: string
           description: transport equipment identification number
-        CargoItemMarksAndNumbers:
+        cargoItemMarksAndNumbers:
           type: string
           description: >-
             An alphanumeric or symbolic identifier assigned by the shipper as a

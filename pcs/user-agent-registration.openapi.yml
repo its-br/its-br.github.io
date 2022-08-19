@@ -15,6 +15,17 @@ paths:
   /user-agent-registration:
     post:
       summary: Create a user agent item
+      parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
       operationId: addUserAgent
       description: Add user agent item to PCS
       requestBody:
@@ -42,6 +53,16 @@ paths:
       summary: Create a user agent item
       operationId: getUserAgent
       parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
         - name: cnpj
           in: path
           description: User Agent's cnpj number that needs to be fetched.
@@ -74,6 +95,16 @@ paths:
       description: Update User Agent, need the same cnpj in User Certificate.
       operationId: updateUserAgent
       parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
         - name: cnpj
           in: path
           description: Cnpj that need to be updated
@@ -106,6 +137,16 @@ paths:
       description: Update User Agent, need the same cnpj in User Certificate.
       operationId: deleteUserAgent
       parameters:
+        - in: header
+          name: PCSAuthorization
+          description: Header to provide credentials that authenticate an actor.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+          example: >-
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbnBqIjoiNjQ5Njk4NjkwMDAxMjEiLCJ1c2VyX2FnZW50IjoiMjc5MjgyMDIwMDAxNTQifQ.4h9yVer_GDtpLQbF21FSoQ45nl32j_VwV2mYp0o6HAE
         - name: cnpj
           in: path
           description: The cnpj that needs to be deleted
@@ -136,9 +177,13 @@ components:
       properties:
         code:
           type: string
+          minLength: 5
+          maxLength: 5
           description: error message code
         message:
           type: string
+          minLength: 1
+          maxLength: 500
           description: error message description
     Registration:
       type: object
@@ -154,22 +199,39 @@ components:
           minLength: 14
           maxLength: 14
           example: '99999999999999'
+        razaoSocial:
+          type: string
+          example: ACME INC.
+        phone:
+          type: string
+          example: (11) 9 9999 9999
         email:
           type: string
           format: email
           example: acme@acme.com
-        phone:
-          type: string
-          example: (11) 9 9999 9999
         address:
           $ref: '#/components/schemas/Address'
     RegistrationUpdate:
       type: object
       required:
+        - cnpj
         - email
         - phone
         - address
       properties:
+        cnpj:
+          type: string
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
+        userAgent:
+          type: string
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
+        name:
+          type: string
+          example: Jonatas
         email:
           type: string
           format: email
