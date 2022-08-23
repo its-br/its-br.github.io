@@ -420,6 +420,7 @@ components:
         - carrierDetails
         - carrierVoyageDetails
         - transportCall
+        - maritimeAgencyCnpj
         - maritimeAgentCallBack
         - voyageOperatorStatus
         - eventPlanningStatus
@@ -449,6 +450,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TransportCall'
+        maritimeAgencyCnpj:
+          type: string
+          description: CNPJ of Maritime Agency
+          minLength: 14
+          maxLength: 14
+          example: '99999999999999'
         otherMaritimeAgency:
           type: array
           items:
