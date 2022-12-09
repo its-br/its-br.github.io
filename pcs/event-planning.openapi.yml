@@ -168,3 +168,10 @@ components:
             - DEPA
           description: Event classification
           example: ARRI
+        originEventTime:
+          type: string
+          enum:
+            - PCS
+            - CARRIER
+          description: Origin of Event Time
+          example: CARRIER
